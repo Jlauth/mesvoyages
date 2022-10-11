@@ -13,7 +13,6 @@ use Symfony\Component\Routing\Annotation\Route;
   * @ Jean
   */
 class AccueilController extends AbstractController{
-
     
     /**
      * @Route("/", name="accueil")

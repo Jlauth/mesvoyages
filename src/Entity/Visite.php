@@ -3,10 +3,18 @@
 namespace App\Entity;
 
 use App\Repository\VisiteRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass=VisiteRepository::class)
+ * @Vich\Uploadable
  */
 class Visite
 {
@@ -51,6 +59,34 @@ class Visite
      * @ORM\Column(type="integer", nullable=true)
      */
     private $tempmax;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Environnement::class)
+     */
+    private $environnements;
+    
+     /**
+     * @Vich\UploadableField(mapping="visites", fileNameProperty="imageName")
+     * @var File|null
+     */
+    private $imageFile;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * 
+     * @var string|null
+     */
+    private $imageName;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updated_at;
+
+    public function __construct()
+    {
+        $this->environnements = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -139,5 +175,123 @@ class Visite
         $this->tempmax = $tempmax;
 
         return $this;
+    }
+    
+    public function getDatecreationString() : string 
+    {
+        if($this->datecreation == null) {
+            return "";
+        }else{
+            return $this->datecreation->format('d/m/Y');
+        }
+    }
+
+    /**
+     * @return Collection<int, Environnement>
+     */
+    public function getEnvironnements(): Collection
+    {
+        return $this->environnements;
+    }
+    
+    /**
+     * @param Environnement $environnement
+     * @return self
+     */
+    public function addEnvironnement(Environnement $environnement): self
+    {
+        if (!$this->environnements->contains($environnement)) {
+            $this->environnements[] = $environnement;
+        }
+
+        return $this;
+    }
+    
+    /**
+     * @param Environnement $environnement
+     * @return self
+     */
+    public function removeEnvironnement(Environnement $environnement): self
+    {
+        $this->environnements->removeElement($environnement);
+
+        return $this;
+    }
+    
+    function getImageFile(): ?File {
+        return $this->imageFile;
+    }
+
+    function getImageName(): ?string {
+        return $this->imageName;
+    }
+
+    /**
+     * @param File|null $imageFile
+     * @return self
+     */
+    function setImageFile(?File $imageFile): self {
+        $this->imageFile = $imageFile;
+        if($this->imageFile instanceof UploadedFile) {
+            $this->updated_at = new \DateTime('now');
+        }
+        return $this;
+    }
+    
+    /**
+     * 
+     * @param string|null $imageName
+     * @return self
+     */
+    function setImageName(?string $imageName):self {
+        $this->imageName = $imageName;
+        return $this;
+    }
+    
+    /**
+     * 
+     * @return \DateTimeInterface|null
+     */
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updated_at;
+    }
+
+    /**
+     * 
+     * @param \DateTimeInterface|null $updated_at
+     * @return self
+     */
+    public function setUpdatedAt(?\DateTimeInterface $updated_at): self
+    {
+        $this->updated_at = $updated_at;
+
+        return $this;
+    }
+    
+    /**
+     * @Assert\Callback
+     * @param ExecutionContextInterface $context
+     */
+    public function validate(ExecutionContextInterface $context) 
+    {
+        $context->buildViolation("message d'erreur")
+                ->atPath('nom_champ')
+                ->addViolation();
+        $image = $this->getImageFile();
+        if($image != null && $image != "") {
+            $tailleImage = @getimagesize($image);
+            if(!($tailleImage==false)) {
+                if($tailleImage[0]>1300 || $tailleImage[1]>1300) {
+                    $context->buildViolation("Cette image est trop grande (1300x1300 maximum).")
+                            ->atPath('imageFile')
+                            ->addViolation();
+                }
+            } else {
+                $context->buildViolation("Ce n'est pas une image.")
+                        ->atPath('imageFile')
+                        ->addViolation();
+            }
+        }
     }
 }

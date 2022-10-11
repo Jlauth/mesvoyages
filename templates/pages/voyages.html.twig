@@ -19,7 +19,7 @@
                     Pays
                     <a href="{{  path('voyages.sort', {champ:'pays', ordre:'ASC'}) }}" class="btn btn-primary btn-sm active" role="button" aria-pressed="true"><</a>
                     <a href="{{  path('voyages.sort', {champ:'pays', ordre:'DESC'}) }}" class="btn btn-primary btn-sm active" role="button" aria-pressed="true">></a>
-                     <form class="form-inline mt-1" method="POST" action="{{  path('voyages.findallequal', {champ:'pays'}) }}">
+                    <form class="form-inline mt-1" method="POST" action="{{  path('voyages.findallequal', {champ:'pays'}) }}">
                         <div class="form-group mr-1 mb-2">
                             <input type="text" class="sm" name="recherche">
                             <button type="submit" class="btn btn-primary mb-2 btn-sm">Filtrer</button>
@@ -43,7 +43,7 @@
                 <tr>
                     <td>
                         <h5 class="text-primary">
-                            <a href="#">{{  visite.ville }}</a>
+                            <a href="{{ path('voyages.showone', {id:visite.id}) }}">{{  visite.ville }}</a>
                         </h5>
                     </td>
                     <td>
