@@ -19,13 +19,26 @@
         </div>
         <div class="col">
             <!-- emplacement photo -->
+            <div>
+                    {{ (visite.imageFile) }}
+            </div>
+            <div>
+                    Image actuelle
+                    {% if visite.imagename %}
+                        <img src="{{ app.request.getBasePath()~vich_uploader_asset(visite,'imageFile') }}" 
+                             class="card-img-top" style="width:100%;height:auto;">
+                    {% else %}
+                        <p>(Aucune image)</p>
+                    {% endif %}
+            </div>
         </div>
         <div class="row mt-5">
             <div class="col md-12">
-                <p><strong>Mon avis: </strong></p>
+                <p><strong>Mon avis sur cette visite</strong></p>
                 <p>
                     {{ visite.avis }}
                 </p>
             </div>
         </div>
+    </div>
 {% endblock %}
