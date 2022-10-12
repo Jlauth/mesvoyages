@@ -1,5 +1,98 @@
 {%  extends "basefront.html.twig" %}
 
 {% block body %}
-    <h1>Page d'accueil</h1>
+    
+        <h5 class="text-primary">Bienvenue sur mon site personnel de présentation de mes voyages<br/><br/></h1>
+        <p>Dans la partie <a href="{{ path('voyages') }}">Voyages</a>, vous pouvez voir la liste de mes visites.<br/>
+            A chaque fois j'ai précisé la ville visitée, le pays, mis une note (entre 0 et 20 ainsi qu'une date de la visite).<br/><br/>
+            Vous pouvez trier la liste de façon croissante et décroissante en fonction :<br></p> 
+        <div class='form-check'>
+            <input class='form-check-input' type='checkbox' value='' id='flexCheckChecked' checked>
+            <label class='form-check-label' for='flexCheckChecked'>
+                Des villes
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+            <label class="form-check-label" for="flexCheckChecked">
+                Des pays
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+            <label class="form-check-label" for="flexCheckChecked">
+                Des notes
+        </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+            <label class="form-check-label" for="flexCheckChecked">
+                Des dates
+            </label>
+        </div>
+        <br/>
+        <p>En cliquant sur une ville spécifique, vous pourrez avoir les informations détaillées lors de la visite :<br/></p>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+            <label class="form-check-label" for="flexCheckChecked">
+                Températures minimales et maximales
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+            <label class="form-check-label" for="flexCheckChecked">
+                Une description de la ville
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+            <label class="form-check-label" for="flexCheckChecked">
+                Les environnements 
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+            <label class="form-check-label" for="flexCheckChecked">
+                Une photo
+            </label>
+        </div>
+        <br/>
+        <p>Enfin, vous pouvez me contact avec le formulaire de <a href="{{ path('contact') }}">Contact</a>.</p>
+        <br/>
+        <p>Voici mes 2 derniers voyages :</p>  
+        <table>
+            <tr>
+                {% for visite in visites %}
+                    <td style="vertical-align: text-top; width: 50%">
+                        <div class="row">
+                            <div class="col">
+                                <!-- emplacement photo -->
+                                {% if visite.imagename %}
+                                    <img src="{{ app.request.getBasePath()~vich_uploader_asset(visite, 'imageFile') }}" 
+                                         class="card-img-top" style="width:50%;height:auto;">
+                                {% endif %}
+                            </div>
+                            <div class="col">
+                                <p>{{ visite.datecreationstring }}</p>
+                                <h5 class="text-primary">
+                                    <a href="{{ path('voyages.showone', {id:visite.id}) }}">{{ visite.ville }}</a>
+                                </h5>
+                                <p>{{ visite.pays }}</p>
+                                {% if visite.note>=10 %}
+                                    <div class="text-success">{{ visite.note }}/20</div>
+                                {% else %}
+                                    <div class="text-danger">{{ visite.note }}/20</div>
+                                {% endif %}
+                                t° entre {{ visite.tempmin }}° et {{ visite.tempmax }}°<br />
+                                <strong>Environnements :</strong><br/>
+                                {% for environnement in visite.environnements %}
+                                    {{ environnement.nom }}
+                                {% endfor %}
+                            </div>    
+                        </div>                    
+                    </td>
+                {% endfor %}    
+            </tr>
+    </table>
+    
 {% endblock %}

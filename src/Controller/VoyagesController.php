@@ -30,7 +30,8 @@ class VoyagesController extends AbstractController{
      * @Route("/voyages", name="voyages")
      * @return Response
      */
-    public function index(): Response{
+    public function index(): Response
+    {
         $visites = $this->repository->findAllOrderBy('datecreation', 'DESC');
         return $this->render("pages/voyages.html.twig", [
             'visites' => $visites
@@ -43,7 +44,8 @@ class VoyagesController extends AbstractController{
      * @param type $ordre
      * @return Response
      */
-    public function sort($champ, $ordre): Response {
+    public function sort($champ, $ordre): Response 
+    {
         $visites = $this->repository->findAllOrderBy($champ, $ordre);
         return $this->render("pages/voyages.html.twig", [
             'visites' => $visites

@@ -41,7 +41,11 @@ class ContactController extends AbstractController {
         ]);
     }
     
-    
+    /**
+     * 
+     * @param MailerInterface $mailer
+     * @param Contact $contact
+     */
     public function sendEmail(MailerInterface $mailer, Contact $contact) {
         $email = (new Email())
                 ->from($contact->getEmail())
